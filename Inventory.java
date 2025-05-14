@@ -3,6 +3,7 @@ class Inventory{
   List<Product> list = new ArrayList<>();
   HashMap<Integer,Product> ProductIdMap = new HashMap<>();
   List<Product> PriceList = new ArrayList<>();
+  HashMap<Integer,Integer> adjList = new HashMap<>();
 
   //All the products will be added here
   public static void AddProducts(){
@@ -14,7 +15,9 @@ class Inventory{
     int price = sc.nextInt();
     System.out.println("Enter the category of the product:");
     String category = sc.nextLine();
-    Product product = new Product(productId,category,price);
+    System.out.println("Enter the quantity:");
+    int quantity = sc.nextInt();
+    Product product = new Product(productId,category,price,quantity);
     list.add(product);
 
   } 
@@ -32,15 +35,18 @@ class Inventory{
         int price = sc.nextInt();
         System.out.println("Enter the updated category of the product:");
         String category = sc.nextLine();    
-        i++;
+        System.out.println("Enter the updated quantity of the product:");
+        int quantity = sc.nextInt();
+        product.price = price;
+        product.category = category;
+        product.quantity = quantity;
+        list.set(i,product); 
+        break;
       }
+      i++;
     }
-    Product product = new Product(productId,category,price);
-    list.set(i,product); 
-
   }
 
-  
   //Product Deletion will be here
   public static void DeleteProducts(){
 
@@ -133,6 +139,7 @@ class Inventory{
   }
   
   //Product filtering by Price using Binary Search
+  //Did not handle the scenario where same price products come
   public static void ProductFiltering(){
 
     Scanner sc = new Scanner(System.in);
@@ -140,30 +147,146 @@ class Inventory{
     System.out.println("Enter the price:");
     int ProductPrice= sc.nextint();
     int left = 0;
-    int right = 0;
-    int index = BinarySearch(left, right, ProductPrice);
+    int right = PriceList.size()-1;
+    Product product = BinarySearch(left, right, ProductPrice);
+    System.out.println("Product Details:");
+    System.out.println("Product ID:"+product.productId);
+    System.out.println("Product Category:"+product.category);
 
   }
 
-  public int BinarySearch(int l, int r, int price){
-    while(l<=r){
+  public Product BinarySearch(int l, int r, int price){
+    while (l<=r){
       
       int mid = (l+r)/2;
       if(PriceList.get(mid).price == price){
-      
+        System.out.println("Product found!");
+        return PriceList.get(mid);
+      }
+      else if(PriceList.get(mid).price > price){
+        l=mid+1;
+      }
+      else{
+        r=mid-1;
       }
 
     }
   }
 
   //Low stock alerts using PriorityQueue
+  public static void LowStockAlert(){
+
+    HashMap<Integer,Integer> OrderMap = new HashMap<>();
+    for(Product product : list){
+      OrderMap.add(product.productId,product.quantity);
+    }
+    PriorityQueue<Map.Entry<Integer,Integer>> queue = new PriorityQueue<>(Map.Entry.comparingByValue());
+    for(Map.Entry<Integer,Integer> entry: OrderMap.entrySet()){
+      if(entry.getValue()<3){
+        queue.add(entry);
+      }
+    }
+    while(!queue.isEmpty()){
+      Map.Entry<Integer,Integer> entry = queue.poll();
+      System.out.println("Product "+entry.getKey()+" is low on stock!");
+    }
+
+  }
 
   //display product relationships
+  public static void DisplayProductRelationships() {
+
+    Scanner sc = new Scanner(System.in);
+    System.out.println("Display the product relationships:");
+    System.out.println("Enter the product ID:");
+    int productId = sc.nextInt();
+    for(Map.Entry<Integer,List<Integer>> entry: adjList.entrySet()){
+      if(adjList.getKey().equals(productId)){
+        System.out.println("Related Products are :"+adjList.getValue());
+      }
+    }
+    
+  }
+
   
   //Manage product relationships
+  public static void AddProductRelationships() {
+    
+    Scanner sc = new Scanner(System.in);
+    int cont = 1;
+    while(cont!=0){
+      System.out.println("Enter the product ID of the product:");
+      int productId = sc.nextInt();
+      System.out.println("Enter the product ID of the related product:");
+      int RelatedProductId = sc.nextInt();
+      adjList.putIfAbsent(productId,new ArrayList<>());
+      adjList.putIfAbsent(RelatedProductId,new ArrayList<>());
+      adjList.get(productId).add(RelatedProductId);
+      adjList.get(RelatedProductId).add(productId);
+      System.out.println("Do you want to continue(0/1):");
+      cont = sc.nextInt();
+    }
+
+  }
+  
 
   public static void main(String[] args) {
+  
+    Scanner sc = new Scanner(System.in);
+    Inventory inventory = new Inventory();
+    while(cont!=0){
+      System.out.println("1. Add Product");
+      System.out.println("2. Update Product");
+      System.out.println("3. Delete Product");
+      System.out.println("4. Lookup");
+      System.out.println("5. Filter");
+      System.out.println("6. Show Product Relationship");
+      System.out.println("7. Add Product Relationship");
+      System.out.println("8. Check for low stock");
+      System.out.println("Enter the operation that you want to perform:");
+      int op = sc.nextInt();
+
+      switch (op) {
+        case 1:
+          inventory.AddProducts(); 
+          break;
+
+        case 2:
+          inventory.UpdateProducts();
+          break;
+
+        case 3:
+          inventory.DeleteProducts();
+          break;
+
+        case 4:
+          inventory.Lookup();
+          break;
+
+        case 5:
+          inventory.SortProductsByPrice();
+          inventory.ProductFiltering();
+          break;
+
+        case 6:
+          inventory.DisplayProductRelationships();
+          break;
+
+        case 7:
+          inventory.AddProductRelationships();
+          break;
+
+        case 8:
+          inventory.LowStockAlert();
+          break;
+
+        default:
+          System.out.println("Incorrect option! Please try again");
+          break;
+      }
+    }
     
+
   }
 
 }
