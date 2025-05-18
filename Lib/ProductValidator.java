@@ -1,5 +1,5 @@
 package Lib;
-import Product;
+import Model.Product;
 
 public class ProductValidator{
 
