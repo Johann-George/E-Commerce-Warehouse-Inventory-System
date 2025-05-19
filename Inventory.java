@@ -1,12 +1,11 @@
 import Lib.ProductValidator;
+import Model.Product;
 import java.util.*;
 
 class Inventory{
 
   List<Product> list = new ArrayList<>();
-  HashMap<Integer,Product> ProductIdMap = new HashMap<>();
-  List<Product> PriceList = new ArrayList<>();
-  HashMap<Integer,List<Integer>> adjList = new HashMap<>();
+  HashMap<Integer,Set<Integer>> adjList = new HashMap<>();
 
   //All the products will be added here
   public void AddProducts(){
@@ -17,6 +16,7 @@ class Inventory{
       int productId = sc.nextInt();
       System.out.println("Enter the price of the product:");
       int price = sc.nextInt();
+      sc.nextLine();
       System.out.println("Enter the category of the product:");
       String category = sc.nextLine();
       System.out.println("Enter the quantity:");
@@ -42,6 +42,7 @@ class Inventory{
         if (productId==product.productId) {
           System.out.println("Enter the updated price of the product:");
           int price = sc.nextInt();
+          sc.nextLine();
           System.out.println("Enter the updated category of the product:");
           String category = sc.nextLine();    
           System.out.println("Enter the updated quantity of the product:");
@@ -67,11 +68,15 @@ class Inventory{
       Scanner sc = new Scanner(System.in);
       System.out.println("Enter the product ID:");
       int productId = sc.nextInt();
-      for(Product product : list){
-        if(productId==product.productId){
-          list.remove(product);
+      Iterator<Product> iterator = list.iterator();  
+      while(iterator.hasNext()){
+        Product product = iterator.next();
+        if(product.productId == productId){
+          iterator.remove();
+          System.out.println("Product successfully removed!");
+          break;
         }
-      }  
+      }
     } catch (IllegalArgumentException e) {
       System.err.println("Error deleting product:"+e.getMessage()); 
     }
@@ -82,6 +87,7 @@ class Inventory{
   public void Lookup(){
 
     Scanner sc = new Scanner(System.in);
+    HashMap<Integer,Product> ProductIdMap = new HashMap<>();
     for(Product product: list){
       ProductIdMap.put(product.productId,product);
     }
@@ -93,11 +99,13 @@ class Inventory{
         System.out.println("Product category:"+entry.getValue().category+"\nProduct Price:"+entry.getValue().price);
       }
     }
+    System.out.println("============================");
     HashMap<String,List<Product>> CategoryMap = new HashMap<>();
     for(Product product: list){
       CategoryMap.putIfAbsent(product.category,new ArrayList<>());
       CategoryMap.get(product.category).add(product);
     }
+    sc.nextLine();
     System.out.println("Enter the product category:");
     String productCategory = sc.nextLine();
     System.out.println("The list of products in that category are:");
@@ -116,42 +124,42 @@ class Inventory{
   //Sort products by price using Heap Sort
   public void SortProductsByPrice(){
 
-    int n=PriceList.size();
+    int n=list.size();
 
     for(int i=n/2-1;i>=0;i--){
-      heapify(PriceList,n,i);
+      heapify(list,n,i);
     }
 
     for(int i=n-1;i>=0;i--){
-      Product temp = PriceList.get(i);
-      PriceList.set(i,PriceList.get(0));
-      PriceList.set(0,temp);
+      Product temp = list.get(i);
+      list.set(i,list.get(0));
+      list.set(0,temp);
 
-      heapify(PriceList,i,0);
+      heapify(list,i,0);
     }
 
   }
 
-  public void heapify(List<Product> PriceList,int n, int i){
+  public void heapify(List<Product> list,int n, int i){
 
     int largest = i;
     int left = 2*i+1;
     int right = 2*i+2;
 
-    if(left<n && PriceList.get(left).price>PriceList.get(largest).price){
+    if(left<n && list.get(left).price>list.get(largest).price){
       largest = left;
     }
 
-    if(right<n && PriceList.get(right).price>PriceList.get(largest).price){
+    if(right<n && list.get(right).price>list.get(largest).price){
       largest = right;
     }
 
     if(largest!=i){
-      Product swap = PriceList.get(largest);
-      PriceList.set(largest,PriceList.get(i));
-      PriceList.set(i,swap);
+      Product swap = list.get(largest);
+      list.set(largest,list.get(i));
+      list.set(i,swap);
 
-      heapify(PriceList,n,largest);
+      heapify(list,n,largest);
     }
 
   }
@@ -159,29 +167,31 @@ class Inventory{
   //Product filtering by Price using Binary Search
   //Did not handle the scenario where same price products come
   public void ProductFiltering(){
-
-    Scanner sc = new Scanner(System.in);
-    System.out.println("Filter products based on price");
-    System.out.println("Enter the price:");
-    int ProductPrice= sc.nextInt();
-    int left = 0;
-    int right = PriceList.size()-1;
-    Product product = BinarySearch(left, right, ProductPrice);
-    System.out.println("Product Details:");
-    System.out.println("Product ID:"+product.productId);
-    System.out.println("Product Category:"+product.category);
-
+    try {
+      Scanner sc = new Scanner(System.in);
+      System.out.println("Filter products based on price");
+      System.out.println("Enter the price:");
+      int ProductPrice= sc.nextInt();
+      int left = 0;
+      int right = list.size()-1;
+      Product product = BinarySearch(left, right, ProductPrice);
+      System.out.println("Product Details:");
+      System.out.println("Product ID:"+product.productId);
+      System.out.println("Product Category:"+product.category);
+    } catch (NullPointerException e) {
+      System.out.println("Product not found!");  
+    }
   }
 
   public Product BinarySearch(int l, int r, int price){
     while (l<=r){
       
       int mid = (l+r)/2;
-      if(PriceList.get(mid).price == price){
+      if(list.get(mid).price == price){
         System.out.println("Product found!");
-        return PriceList.get(mid);
+        return list.get(mid);
       }
-      else if(PriceList.get(mid).price > price){
+      else if(list.get(mid).price > price){
         l=mid+1;
       }
       else{
@@ -219,7 +229,7 @@ class Inventory{
     System.out.println("Display the product relationships:");
     System.out.println("Enter the product ID:");
     int productId = sc.nextInt();
-    for(Map.Entry<Integer,List<Integer>> entry: adjList.entrySet()){
+    for(Map.Entry<Integer,Set<Integer>> entry: adjList.entrySet()){
       if(entry.getKey().equals(productId)){
         System.out.println("Related Products are :"+entry.getValue());
       }
@@ -238,8 +248,24 @@ class Inventory{
       int productId = sc.nextInt();
       System.out.println("Enter the product ID of the related product:");
       int RelatedProductId = sc.nextInt();
-      adjList.putIfAbsent(productId,new ArrayList<>());
-      adjList.putIfAbsent(RelatedProductId,new ArrayList<>());
+      boolean RelatedProductFound=false;
+      boolean ProductFound=false;
+      Iterator<Product> iterator = list.iterator();
+      while(iterator.hasNext()){
+        Product product = iterator.next();
+        if(product.productId == productId){
+          ProductFound = true;
+        }
+        if(product.productId == RelatedProductId){
+          RelatedProductFound = true;
+        }
+      }
+      if(ProductFound == false || RelatedProductFound == false){
+        System.out.println("Either Product or Related product does not exist!");
+        return;
+      }
+      adjList.putIfAbsent(productId,new HashSet<>());
+      adjList.putIfAbsent(RelatedProductId,new HashSet<>());
       adjList.get(productId).add(RelatedProductId);
       adjList.get(RelatedProductId).add(productId);
       System.out.println("Do you want to continue(0/1):");

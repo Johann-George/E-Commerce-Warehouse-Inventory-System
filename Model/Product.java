@@ -1,9 +1,11 @@
-class Product{
+package Model;
 
-  int productId;
-  String category;
-  int price;
-  int quantity;
+public class Product{
+
+  public int productId;
+  public String category;
+  public int price;
+  public int quantity;
 
   public Product(int productId, String category, int price, int quantity){
     this.productId=productId;
