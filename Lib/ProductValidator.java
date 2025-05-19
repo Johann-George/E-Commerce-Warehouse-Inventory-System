@@ -1,17 +1,18 @@
-package Lib;
-import Model.Product;
+package lib;
 
-public class ProductValidator{
+import model.Product;
 
-  public static void isValidProduct(Product p) throws IllegalArgumentException{
+public class ProductValidator {
 
-    if(p==null){
+  public static void isValidProduct(Product p) throws IllegalArgumentException {
+
+    if (p == null) {
       throw new IllegalArgumentException("Product cannot be null");
     }
-    if(p.productId < 0){
+    if (p.productId < 0) {
       throw new IllegalArgumentException("Product ID cannot be empty");
     }
-    if(p.price<0){
+    if (p.price < 0) {
       throw new IllegalArgumentException("Product price must be greater than 0");
     }
 

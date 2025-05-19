@@ -1,6 +1,6 @@
-import Lib.ProductValidator;
-import Lib.IntegerValidator;
-import Model.Product;
+import lib.ProductValidator;
+import lib.IntegerValidator;
+import model.Product;
 import java.util.*;
 
 class Inventory {
