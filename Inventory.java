@@ -28,7 +28,6 @@ class Inventory{
     catch(IllegalArgumentException e){
       System.err.println("Error adding product: "+e.getMessage()); 
     }
-    
   } 
 
   //Product Updation will be here
