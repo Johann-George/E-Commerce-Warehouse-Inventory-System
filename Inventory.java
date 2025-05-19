@@ -1,4 +1,5 @@
 import Lib.ProductValidator;
+import Lib.IntegerValidator;
 import Model.Product;
 import java.util.*;
 
@@ -13,14 +14,13 @@ class Inventory {
     try {
       Scanner sc = new Scanner(System.in);
       System.out.println("Enter the product ID:");
-      int productId = sc.nextInt();
+      int productId = IntegerValidator.getValidatedInteger(sc);
       System.out.println("Enter the price of the product:");
-      int price = sc.nextInt();
-      sc.nextLine();
+      int price = IntegerValidator.getValidatedInteger(sc);
       System.out.println("Enter the category of the product:");
       String category = sc.nextLine();
       System.out.println("Enter the quantity:");
-      int quantity = sc.nextInt();
+      int quantity = IntegerValidator.getValidatedInteger(sc);
       Product product = new Product(productId, category, price, quantity);
       ProductValidator.isValidProduct(product);
       list.add(product);
@@ -35,17 +35,17 @@ class Inventory {
     try {
       Scanner sc = new Scanner(System.in);
       System.out.println("Enter the product ID:");
-      int productId = sc.nextInt();
+      int productId = IntegerValidator.getValidatedInteger(sc);
       int i = 0;
       for (Product product : list) {
         if (productId == product.productId) {
           System.out.println("Enter the updated price of the product:");
-          int price = sc.nextInt();
+          int price = IntegerValidator.getValidatedInteger(sc);
           sc.nextLine();
           System.out.println("Enter the updated category of the product:");
           String category = sc.nextLine();
           System.out.println("Enter the updated quantity of the product:");
-          int quantity = sc.nextInt();
+          int quantity = IntegerValidator.getValidatedInteger(sc);
           product.price = price;
           product.category = category;
           product.quantity = quantity;
@@ -65,7 +65,7 @@ class Inventory {
     try {
       Scanner sc = new Scanner(System.in);
       System.out.println("Enter the product ID:");
-      int productId = sc.nextInt();
+      int productId = IntegerValidator.getValidatedInteger(sc);
       Iterator<Product> iterator = list.iterator();
       while (iterator.hasNext()) {
         Product product = iterator.next();
@@ -90,7 +90,7 @@ class Inventory {
       ProductIdMap.put(product.productId, product);
     }
     System.out.println("Enter the product ID of the product:");
-    int productId = sc.nextInt();
+    int productId = IntegerValidator.getValidatedInteger(sc);
     for (Map.Entry<Integer, Product> entry : ProductIdMap.entrySet()) {
       if (entry.getKey().equals(productId)) {
         System.out.println("Products found!");
@@ -170,7 +170,7 @@ class Inventory {
       Scanner sc = new Scanner(System.in);
       System.out.println("Filter products based on price");
       System.out.println("Enter the price:");
-      int ProductPrice = sc.nextInt();
+      int ProductPrice = IntegerValidator.getValidatedInteger(sc);
       int left = 0;
       int right = list.size() - 1;
       Product product = BinarySearch(left, right, ProductPrice);
@@ -179,7 +179,7 @@ class Inventory {
       System.out.println("Product ID:" + product.productId);
       System.out.println("Product Category:" + product.category);
     } catch (IllegalArgumentException e) {
-      System.out.println("Error in product:"+e.getMessage());
+      System.out.println("Error in product:" + e.getMessage());
     }
   }
 
@@ -226,7 +226,7 @@ class Inventory {
     Scanner sc = new Scanner(System.in);
     System.out.println("Display the product relationships:");
     System.out.println("Enter the product ID:");
-    int productId = sc.nextInt();
+    int productId = IntegerValidator.getValidatedInteger(sc);
     for (Map.Entry<Integer, Set<Integer>> entry : adjList.entrySet()) {
       if (entry.getKey().equals(productId)) {
         System.out.println("Related Products are :" + entry.getValue());
@@ -242,7 +242,7 @@ class Inventory {
     int cont = 1;
     while (cont != 0) {
       System.out.println("Enter the product ID of the product:");
-      int productId = sc.nextInt();
+      int productId = IntegerValidator.getValidatedInteger(sc);
       System.out.println("Enter the product ID of the related product:");
       int RelatedProductId = sc.nextInt();
       boolean RelatedProductFound = false;
@@ -266,7 +266,7 @@ class Inventory {
       adjList.get(productId).add(RelatedProductId);
       adjList.get(RelatedProductId).add(productId);
       System.out.println("Do you want to continue(0/1):");
-      cont = sc.nextInt();
+      cont = IntegerValidator.getValidatedInteger(sc);
     }
 
   }
@@ -286,7 +286,7 @@ class Inventory {
       System.out.println("7. Add Product Relationship");
       System.out.println("8. Check for low stock");
       System.out.println("Enter the operation that you want to perform:");
-      int op = sc.nextInt();
+      int op = IntegerValidator.getValidatedInteger(sc);
 
       switch (op) {
         case 1:
@@ -326,10 +326,8 @@ class Inventory {
           System.out.println("Incorrect option! Please try again");
           break;
       }
-      System.out.println("Do you want to continue(0/1):");
-      cont = sc.nextInt();
+      System.out.println("Do you want to continue the program(0/1):");
+      cont = IntegerValidator.getValidatedInteger(sc);
     }
-
   }
-
 }
