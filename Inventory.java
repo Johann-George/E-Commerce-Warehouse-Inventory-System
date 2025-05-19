@@ -2,15 +2,15 @@ import Lib.ProductValidator;
 import Model.Product;
 import java.util.*;
 
-class Inventory{
+class Inventory {
 
   List<Product> list = new ArrayList<>();
-  HashMap<Integer,Set<Integer>> adjList = new HashMap<>();
+  HashMap<Integer, Set<Integer>> adjList = new HashMap<>();
 
-  //All the products will be added here
-  public void AddProducts(){
+  // All the products will be added here
+  public void AddProducts() {
 
-    try{
+    try {
       Scanner sc = new Scanner(System.in);
       System.out.println("Enter the product ID:");
       int productId = sc.nextInt();
@@ -21,99 +21,98 @@ class Inventory{
       String category = sc.nextLine();
       System.out.println("Enter the quantity:");
       int quantity = sc.nextInt();
-      Product product = new Product(productId,category,price,quantity);
+      Product product = new Product(productId, category, price, quantity);
       ProductValidator.isValidProduct(product);
       list.add(product);
-    }
-    catch(IllegalArgumentException e){
-      System.err.println("Error adding product: "+e.getMessage()); 
-    }
-  } 
-
-  //Product Updation will be here
-  public void UpdateProducts(){
-
-    try{
-      Scanner sc = new Scanner(System.in);
-      System.out.println("Enter the product ID:");
-      int productId = sc.nextInt();
-      int i=0;
-      for(Product product: list){
-        if (productId==product.productId) {
-          System.out.println("Enter the updated price of the product:");
-          int price = sc.nextInt();
-          sc.nextLine();
-          System.out.println("Enter the updated category of the product:");
-          String category = sc.nextLine();    
-          System.out.println("Enter the updated quantity of the product:");
-          int quantity = sc.nextInt();
-          product.price = price;
-          product.category = category;
-          product.quantity = quantity;
-          list.set(i,product); 
-          break;
-        }
-        i++;
-      }
-    }
-    catch(IllegalArgumentException e){
-      System.err.println("Error updating product: "+e.getMessage());
+    } catch (IllegalArgumentException e) {
+      System.err.println("Error adding product: " + e.getMessage());
     }
   }
 
-  //Product Deletion will be here
-  public void DeleteProducts(){
+  // Product Updation will be here
+  public void UpdateProducts() {
 
     try {
       Scanner sc = new Scanner(System.in);
       System.out.println("Enter the product ID:");
       int productId = sc.nextInt();
-      Iterator<Product> iterator = list.iterator();  
-      while(iterator.hasNext()){
+      int i = 0;
+      for (Product product : list) {
+        if (productId == product.productId) {
+          System.out.println("Enter the updated price of the product:");
+          int price = sc.nextInt();
+          sc.nextLine();
+          System.out.println("Enter the updated category of the product:");
+          String category = sc.nextLine();
+          System.out.println("Enter the updated quantity of the product:");
+          int quantity = sc.nextInt();
+          product.price = price;
+          product.category = category;
+          product.quantity = quantity;
+          list.set(i, product);
+          break;
+        }
+        i++;
+      }
+    } catch (IllegalArgumentException e) {
+      System.err.println("Error updating product: " + e.getMessage());
+    }
+  }
+
+  // Product Deletion will be here
+  public void DeleteProducts() {
+
+    try {
+      Scanner sc = new Scanner(System.in);
+      System.out.println("Enter the product ID:");
+      int productId = sc.nextInt();
+      Iterator<Product> iterator = list.iterator();
+      while (iterator.hasNext()) {
         Product product = iterator.next();
-        if(product.productId == productId){
+        if (product.productId == productId) {
           iterator.remove();
           System.out.println("Product successfully removed!");
           break;
         }
       }
     } catch (IllegalArgumentException e) {
-      System.err.println("Error deleting product:"+e.getMessage()); 
+      System.err.println("Error deleting product:" + e.getMessage());
     }
 
   }
 
-  //lookup of products using HashMap
-  public void Lookup(){
+  // lookup of products using HashMap
+  public void Lookup() {
 
     Scanner sc = new Scanner(System.in);
-    HashMap<Integer,Product> ProductIdMap = new HashMap<>();
-    for(Product product: list){
-      ProductIdMap.put(product.productId,product);
+    HashMap<Integer, Product> ProductIdMap = new HashMap<>();
+    for (Product product : list) {
+      ProductIdMap.put(product.productId, product);
     }
     System.out.println("Enter the product ID of the product:");
     int productId = sc.nextInt();
-    for(Map.Entry<Integer,Product> entry : ProductIdMap.entrySet()){
-      if(entry.getKey().equals(productId)){
+    for (Map.Entry<Integer, Product> entry : ProductIdMap.entrySet()) {
+      if (entry.getKey().equals(productId)) {
         System.out.println("Products found!");
-        System.out.println("Product category:"+entry.getValue().category+"\nProduct Price:"+entry.getValue().price);
+        System.out
+            .println("Product category:" + entry.getValue().category + "\nProduct Price:" + entry.getValue().price);
       }
     }
     System.out.println("============================");
-    HashMap<String,List<Product>> CategoryMap = new HashMap<>();
-    for(Product product: list){
-      CategoryMap.putIfAbsent(product.category,new ArrayList<>());
+    HashMap<String, List<Product>> CategoryMap = new HashMap<>();
+    for (Product product : list) {
+      CategoryMap.putIfAbsent(product.category, new ArrayList<>());
       CategoryMap.get(product.category).add(product);
     }
     sc.nextLine();
     System.out.println("Enter the product category:");
     String productCategory = sc.nextLine();
     System.out.println("The list of products in that category are:");
-    for(Map.Entry<String,List<Product>> entry: CategoryMap.entrySet()){
-      if(productCategory.equals(entry.getKey())){
-        for(Product Plist: entry.getValue()){
-          System.out.println("Product ID:"+Plist.productId);
-          System.out.println("Product Price:"+Plist.price);
+    for (Map.Entry<String, List<Product>> entry : CategoryMap.entrySet()) {
+      if (productCategory.equals(entry.getKey())) {
+        for (Product Plist : entry.getValue()) {
+          System.out.println("Product ID:" + Plist.productId);
+          System.out.println("Product Price:" + Plist.price);
           System.out.println("=============================");
         }
       }
@@ -121,151 +120,149 @@ class Inventory{
 
   }
 
-  //Sort products by price using Heap Sort
-  public void SortProductsByPrice(){
+  // Sort products by price using Heap Sort
+  public void SortProductsByPrice() {
 
-    int n=list.size();
+    int n = list.size();
 
-    for(int i=n/2-1;i>=0;i--){
-      heapify(list,n,i);
+    for (int i = n / 2 - 1; i >= 0; i--) {
+      heapify(list, n, i);
     }
 
-    for(int i=n-1;i>=0;i--){
+    for (int i = n - 1; i >= 0; i--) {
       Product temp = list.get(i);
-      list.set(i,list.get(0));
-      list.set(0,temp);
+      list.set(i, list.get(0));
+      list.set(0, temp);
 
-      heapify(list,i,0);
+      heapify(list, i, 0);
     }
 
   }
 
-  public void heapify(List<Product> list,int n, int i){
+  public void heapify(List<Product> list, int n, int i) {
 
     int largest = i;
-    int left = 2*i+1;
-    int right = 2*i+2;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
 
-    if(left<n && list.get(left).price>list.get(largest).price){
+    if (left < n && list.get(left).price > list.get(largest).price) {
       largest = left;
     }
 
-    if(right<n && list.get(right).price>list.get(largest).price){
+    if (right < n && list.get(right).price > list.get(largest).price) {
       largest = right;
     }
 
-    if(largest!=i){
+    if (largest != i) {
       Product swap = list.get(largest);
-      list.set(largest,list.get(i));
-      list.set(i,swap);
+      list.set(largest, list.get(i));
+      list.set(i, swap);
 
-      heapify(list,n,largest);
+      heapify(list, n, largest);
     }
 
   }
-  
-  //Product filtering by Price using Binary Search
-  //Did not handle the scenario where same price products come
-  public void ProductFiltering(){
+
+  // Product filtering by Price using Binary Search
+  // Did not handle the scenario where same price products come
+  public void ProductFiltering() {
     try {
       Scanner sc = new Scanner(System.in);
       System.out.println("Filter products based on price");
       System.out.println("Enter the price:");
-      int ProductPrice= sc.nextInt();
+      int ProductPrice = sc.nextInt();
       int left = 0;
-      int right = list.size()-1;
+      int right = list.size() - 1;
       Product product = BinarySearch(left, right, ProductPrice);
+      ProductValidator.isValidProduct(product);
       System.out.println("Product Details:");
-      System.out.println("Product ID:"+product.productId);
-      System.out.println("Product Category:"+product.category);
-    } catch (NullPointerException e) {
-      System.out.println("Product not found!");  
+      System.out.println("Product ID:" + product.productId);
+      System.out.println("Product Category:" + product.category);
+    } catch (IllegalArgumentException e) {
+      System.out.println("Error in product:"+e.getMessage());
     }
   }
 
-  public Product BinarySearch(int l, int r, int price){
-    while (l<=r){
-      
-      int mid = (l+r)/2;
-      if(list.get(mid).price == price){
+  public Product BinarySearch(int l, int r, int price) {
+    while (l <= r) {
+
+      int mid = (l + r) / 2;
+      if (list.get(mid).price == price) {
         System.out.println("Product found!");
         return list.get(mid);
-      }
-      else if(list.get(mid).price > price){
-        l=mid+1;
-      }
-      else{
-        r=mid-1;
+      } else if (list.get(mid).price > price) {
+        l = mid + 1;
+      } else {
+        r = mid - 1;
       }
 
     }
     return null;
   }
 
-  //Low stock alerts using PriorityQueue
-  public void LowStockAlert(){
+  // Low stock alerts using PriorityQueue
+  public void LowStockAlert() {
 
-    HashMap<Integer,Integer> OrderMap = new HashMap<>();
-    for(Product product : list){
-      OrderMap.put(product.productId,product.quantity);
+    HashMap<Integer, Integer> OrderMap = new HashMap<>();
+    for (Product product : list) {
+      OrderMap.put(product.productId, product.quantity);
     }
-    PriorityQueue<Map.Entry<Integer,Integer>> queue = new PriorityQueue<>(Map.Entry.comparingByValue());
-    for(Map.Entry<Integer,Integer> entry: OrderMap.entrySet()){
-      if(entry.getValue()<3){
+    PriorityQueue<Map.Entry<Integer, Integer>> queue = new PriorityQueue<>(Map.Entry.comparingByValue());
+    for (Map.Entry<Integer, Integer> entry : OrderMap.entrySet()) {
+      if (entry.getValue() < 3) {
         queue.add(entry);
       }
     }
-    while(!queue.isEmpty()){
-      Map.Entry<Integer,Integer> entry = queue.poll();
-      System.out.println("Product "+entry.getKey()+" is low on stock!");
+    while (!queue.isEmpty()) {
+      Map.Entry<Integer, Integer> entry = queue.poll();
+      System.out.println("Product " + entry.getKey() + " is low on stock!");
     }
 
   }
 
-  //display product relationships
+  // display product relationships
   public void DisplayProductRelationships() {
 
     Scanner sc = new Scanner(System.in);
     System.out.println("Display the product relationships:");
     System.out.println("Enter the product ID:");
     int productId = sc.nextInt();
-    for(Map.Entry<Integer,Set<Integer>> entry: adjList.entrySet()){
-      if(entry.getKey().equals(productId)){
-        System.out.println("Related Products are :"+entry.getValue());
+    for (Map.Entry<Integer, Set<Integer>> entry : adjList.entrySet()) {
+      if (entry.getKey().equals(productId)) {
+        System.out.println("Related Products are :" + entry.getValue());
       }
     }
-    
+
   }
 
-  
-  //Manage product relationships
+  // Manage product relationships
   public void AddProductRelationships() {
-    
+
     Scanner sc = new Scanner(System.in);
     int cont = 1;
-    while(cont!=0){
+    while (cont != 0) {
       System.out.println("Enter the product ID of the product:");
       int productId = sc.nextInt();
       System.out.println("Enter the product ID of the related product:");
       int RelatedProductId = sc.nextInt();
-      boolean RelatedProductFound=false;
-      boolean ProductFound=false;
+      boolean RelatedProductFound = false;
+      boolean ProductFound = false;
       Iterator<Product> iterator = list.iterator();
-      while(iterator.hasNext()){
+      while (iterator.hasNext()) {
         Product product = iterator.next();
-        if(product.productId == productId){
+        if (product.productId == productId) {
           ProductFound = true;
         }
-        if(product.productId == RelatedProductId){
+        if (product.productId == RelatedProductId) {
           RelatedProductFound = true;
         }
       }
-      if(ProductFound == false || RelatedProductFound == false){
+      if (ProductFound == false || RelatedProductFound == false) {
         System.out.println("Either Product or Related product does not exist!");
         return;
       }
-      adjList.putIfAbsent(productId,new HashSet<>());
-      adjList.putIfAbsent(RelatedProductId,new HashSet<>());
+      adjList.putIfAbsent(productId, new HashSet<>());
+      adjList.putIfAbsent(RelatedProductId, new HashSet<>());
       adjList.get(productId).add(RelatedProductId);
       adjList.get(RelatedProductId).add(productId);
       System.out.println("Do you want to continue(0/1):");
@@ -273,14 +270,13 @@ class Inventory{
     }
 
   }
-  
 
   public static void main(String[] args) {
-  
+
     Scanner sc = new Scanner(System.in);
     Inventory inventory = new Inventory();
-    int cont=1;
-    while(cont!=0){
+    int cont = 1;
+    while (cont != 0) {
       System.out.println("1. Add Product");
       System.out.println("2. Update Product");
       System.out.println("3. Delete Product");
@@ -294,7 +290,7 @@ class Inventory{
 
       switch (op) {
         case 1:
-          inventory.AddProducts(); 
+          inventory.AddProducts();
           break;
 
         case 2:
@@ -333,7 +329,6 @@ class Inventory{
       System.out.println("Do you want to continue(0/1):");
       cont = sc.nextInt();
     }
-    
 
   }
 
